@@ -1,6 +1,7 @@
 #include <sourcemod>
 
 #include <base64>
+#include <cURL>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -36,11 +37,13 @@ public Action GetBearerToken(int client, int args)
 	BuildPath(Path_SM, configPath, PLATFORM_MAX_PATH, "configs/twitterannouncements.cfg");
 
 	KeyValues apiKeys = new KeyValues("");
-	KeyValues.ImportFromFile(configPath);
+	apiKeys.ImportFromFile(configPath);
 
 	char consumerKey[32];
 	char consumerSecret[64];
 
 	apiKeys.GetString("consumer_key", consumerKey, sizeof(consumerKey), "INVALID");
 	apiKeys.GetString("consumer_secret", consumerSecret, sizeof(consumerSecret), "INVALID");
+
+	PrintToServer("%s:%s", consumerKey, consumerSecret);
 }	
