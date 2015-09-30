@@ -218,7 +218,7 @@ public int GotMostRecentTweetData(Handle request, bool failure, bool requestSucc
 			}
 			case k_EHTTPStatusCode401Unauthorized:
 			{
-				SetFailState("%s", "The supplied bearer token is invalid.");
+				SetFailState("%s", "The supplied bearer token is expired, or invalid.");
 				delete request;
 			}
 			case k_EHTTPStatusCode403Forbidden:
