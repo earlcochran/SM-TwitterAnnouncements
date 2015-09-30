@@ -1,3 +1,25 @@
+/**
+ * =========================================================
+ * Twitter Announcements
+ * A plugin for displaying tweets to players in a server.
+ *
+ * Copyright (C) 2015 stretch
+ * =========================================================
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <sourcemod>
 
 #include <base64>
@@ -142,12 +164,11 @@ public int GotBearerTokenData(Handle request, bool failure, bool requestSuccessf
 				SetFailState("%s", "The request for a bearer token was refused. Please check your consumer_key/consumer_secret, and reload the plugin.");
 				delete request;
 			}
-			/*
 			case k_EHTTPStatusCode500InternalServerError, k_EHTTPStatusCode503ServiceUnavailable:
 			{
 				LogError("%s", "The Twitter API servers are not working, or under heavy load. Trying again...");
-				SteamWorks_SendHTTPRequest(request);
-			}*/
+				GetBearerToken();
+			}
 		}
 		delete request;
 	}
@@ -157,7 +178,7 @@ public int GotBearerTokenData(Handle request, bool failure, bool requestSuccessf
 	}
 }
 
-public bool GetMostRecentTweet()
+public void GetMostRecentTweet()
 {
 	// Format the Authorization header
 	char authorizationHeader[256];
@@ -207,7 +228,7 @@ public int GotMostRecentTweetData(Handle request, bool failure, bool requestSucc
 					}
 					if (DisplayType.IntValue == 1)
 					{
-						ServerCommand("sm_msay %s", currentTweet);
+						SendPanelToAll(currentTweet);
 					}
 
 					gLastTweet = currentTweet;
@@ -237,4 +258,37 @@ public int GotMostRecentTweetData(Handle request, bool failure, bool requestSucc
 public Action CheckForNewTweet(Handle timer)
 {
 	GetMostRecentTweet();
+}
+
+/**
+ * The following two functions were borrowed from SourceMod plugin file basechat.sp on 2015-09-30.
+ * SendPanelToAll was modified to display a custom panel title.
+ * https://github.com/alliedmodders/sourcemod/blob/3291e3a38f8a458c7aebc233811e9514a2ec5f11/plugins/basechat.sp#L396
+ */
+public void SendPanelToAll(char[] message)
+{	
+	ReplaceString(message, 192, "\\n", "\n");
+	
+	Panel mSayPanel = CreatePanel();
+	mSayPanel.SetTitle("Announcement:");
+	DrawPanelItem(mSayPanel, "", ITEMDRAW_SPACER);
+	DrawPanelText(mSayPanel, message);
+	DrawPanelItem(mSayPanel, "", ITEMDRAW_SPACER);
+
+	SetPanelCurrentKey(mSayPanel, 10);
+	DrawPanelItem(mSayPanel, "Exit", ITEMDRAW_CONTROL);
+
+	for(int i = 1; i <= MaxClients; i++)
+	{
+		if(IsClientInGame(i) && !IsFakeClient(i))
+		{
+			SendPanelToClient(mSayPanel, i, Handler_DoNothing, 10);
+		}
+	}
+
+	delete mSayPanel;
+}
+public int Handler_DoNothing(Menu menu, MenuAction action, int param1, int param2)
+{
+	/* Do nothing */
 }
