@@ -12,7 +12,7 @@ This plugin depends on the following sourcemod extensions, and includes. Obtain 
 
 ##Installation
 
-1. Download the archive to your server mod's root folder. (Ex: /csgo/, /tf2/, etc...)
+1. [Download the latest build](https://github.com/earlcochran/SM-TwitterAnnouncements/blob/master/build/SM-TwitterAnnouncements.tar.gz?raw=true) to your server mod's root folder. (Ex: /csgo/, /tf2/, etc...)
 2. Extract it: `tar xvzf sm-twitter-announcements.tar.gz` 
 
 ##Setup
