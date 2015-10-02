@@ -4,7 +4,6 @@ A sourcemod plugin that allows server admins to broadcast announcements to all o
 
 ##Prerequisites
 
-<br>
 This plugin depends on the following extensions, and includes. Obtain them from the links below, and install them to your server before proceeding:
 
 1. [SteamWorks](https://forums.alliedmods.net/showthread.php?t=229556)
