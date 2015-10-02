@@ -3,10 +3,10 @@
  * Twitter Announcements
  * A plugin for displaying tweets to players in a server.
  *
- * Copyright (C) 2015 stretch
+ * Copyright (C) 2015 Earl Cochran "stretch"
  * =========================================================
  *
- * This program is free software: you can redistribute it and/or modify
+ * Twitter Announcements is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -55,7 +55,7 @@ public void OnPluginStart()
 {
 	gApiKeys = new KeyValues("");
 
-	DisplayType = CreateConVar("sm_ta_displaytype", "0", "Announcement display type. 0 = hintbox, 1 = msay", 0, true, 0.0, true, 1.0);
+	DisplayType = CreateConVar("sm_announcements_displaytype", "0", "Announcement display type. 0 = hintbox, 1 = msay", 0, true, 0.0, true, 1.0);
 	LoadConfig();
 
 	CreateTimer(30.0, CheckForNewTweet, _, TIMER_REPEAT);
@@ -118,7 +118,7 @@ public void GetBearerToken()
 	SteamWorks_SetHTTPRequestHeaderValue(request_GetBearerToken, "Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 	SteamWorks_SetHTTPRequestGetOrPostParameter(request_GetBearerToken, "grant_type", "client_credentials");
 
-	// Send request
+	// Set the callback, and send the request
 	SteamWorks_SetHTTPCallbacks(request_GetBearerToken, GotBearerTokenData);
 	SteamWorks_SendHTTPRequest(request_GetBearerToken);
 }
@@ -261,7 +261,7 @@ public Action CheckForNewTweet(Handle timer)
 }
 
 /**
- * The following two functions were borrowed from SourceMod plugin file basechat.sp on 2015-09-30.
+ * The following functions were borrowed from SourceMod plugin file basechat.sp on 2015-09-30.
  * SendPanelToAll was modified to display a custom panel title.
  * https://github.com/alliedmodders/sourcemod/blob/3291e3a38f8a458c7aebc233811e9514a2ec5f11/plugins/basechat.sp#L396
  */
