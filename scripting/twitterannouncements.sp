@@ -33,7 +33,7 @@ public Plugin myinfo = {
 	name        = "Twitter Server Announcements",
 	author      = "stretch",
 	description = "Displays announcements made from a twitter account to your server.",
-	version     = "0.5.0",
+	version     = "0.6",
 	url         = "http://whocares.net"
 };
 
@@ -50,15 +50,15 @@ char gLastTweet[256];
 
 // CVARS
 ConVar DisplayType;
+ConVar RequestInterval;
 
 public void OnPluginStart()
 {
 	gApiKeys = new KeyValues("");
 
-	DisplayType = CreateConVar("sm_announcements_displaytype", "0", "Announcement display type. 0 = hintbox, 1 = msay", 0, true, 0.0, true, 1.0);
+	DisplayType 	= CreateConVar("sm_announcements_displaytype", "0", "Announcement display type. 0 = hintbox, 1 = msay", 0, true, 0.0, true, 1.0);
+	RequestInterval = CreateConVar("sm_announcements_requestinterval", "30.0", "The interval at which to poll the Twitter API for changes.", 0, true, 5.0, true, 30.0);
 	LoadConfig();
-
-	CreateTimer(30.0, CheckForNewTweet, _, TIMER_REPEAT);
 }
 
 public void LoadConfig()
@@ -90,6 +90,9 @@ public void LoadConfig()
 			LogMessage("%s", "Config loaded successfully!");
 			delete gApiKeys;
 		}
+
+		// Create the main timer here after the config loads.
+		CreateTimer(RequestInterval.FloatValue, CheckForNewTweet, _, TIMER_REPEAT);
 	}
 	else
 	{
@@ -101,11 +104,11 @@ public void LoadConfig()
 public void GetBearerToken()
 {
 	// Concatenate key:secret
-	char twitterKey[128];
+	char twitterKey[256];
 	Format(twitterKey, sizeof(twitterKey), "%s:%s", gConsumerKey, gConsumerSecret);
 
 	// Base64 encode the concatenated key:secret
-	char encodedKey[128];
+	char encodedKey[256];
 	EncodeBase64(encodedKey, sizeof(encodedKey), twitterKey);
 
 	// Format the Authorization header
@@ -141,7 +144,7 @@ public int GotBearerTokenData(Handle request, bool failure, bool requestSuccessf
 				
 				// Create JSON handle, load the response, and retreive the token.
 				Handle response = json_load(body);
-				char bearerToken[140];
+				char bearerToken[256];
 				json_object_get_string(response, "access_token", bearerToken, sizeof(bearerToken));
 
 				// Set the token in the KeyValues store, and save it to the config file.
@@ -153,7 +156,7 @@ public int GotBearerTokenData(Handle request, bool failure, bool requestSuccessf
 				}
 				else
 				{
-					SetFailState("%s", "There was an error while trying to save the bearer token to the config.");
+					SetFailState("%s", "There was an error while trying to save the bearer token to the config. Please reload the plugin and try again.");
 				}
 				// Free the request & response Handles
 				delete request;
@@ -219,8 +222,9 @@ public int GotMostRecentTweetData(Handle request, bool failure, bool requestSucc
 				json_object_get_string(response, "text", currentTweet, sizeof(currentTweet));
 
 				// Compare current tweet to the last tweet, if they are different:
-				if(strcmp(currentTweet, gLastTweet) != 0)
+				if(strcmp(currentTweet, gLastTweet) != 0 && bodySize > 2)
 				{
+					LogMessage("[ANNOUNCEMENT]: %s", currentTweet);
 					PrintToChatAll("[ANNOUNCEMENT]: %s", currentTweet);
 					if (DisplayType.IntValue == 0)
 					{
@@ -239,12 +243,12 @@ public int GotMostRecentTweetData(Handle request, bool failure, bool requestSucc
 			}
 			case k_EHTTPStatusCode401Unauthorized:
 			{
-				SetFailState("%s", "The supplied bearer token is expired, or invalid.");
+				LogError("%s", "The supplied bearer token is expired, or invalid. If this error persists, please check your config.");
 				delete request;
 			}
 			case k_EHTTPStatusCode403Forbidden:
 			{
-				SetFailState("%s", "The request was denied.");
+				LogError("%s", "The request was denied. If this error persists, please check your config.");
 				delete request;
 			}
 		}

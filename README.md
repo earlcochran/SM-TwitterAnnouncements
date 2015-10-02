@@ -26,3 +26,8 @@ This plugin relies on the Twitter API, and you will need a set of API keys from 
 5. Replace the `twitter_account` value with the desired account to monitor.
 
 At this point the plugin is ready to go! Just load it via `sm plugins load twitterannouncements`, or restart your server.
+
+##ConVars
+
+1. `sm_announcements_displaytype`: Announcement display type. 0 = hintbox, 1 = msay
+1. `sm_announcements_requestinterval`: The interval at which to poll the Twitter API for changes.
