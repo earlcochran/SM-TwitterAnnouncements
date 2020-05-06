@@ -1,8 +1,8 @@
-#Sourcemod Twitter Announcements
+# Sourcemod Twitter Announcements
 
 A sourcemod plugin that allows server admins to broadcast announcements to all of their servers via Twitter.
 
-##Prerequisites
+## Prerequisites
 
 This plugin depends on the following sourcemod extensions, and includes. Obtain them from the links below, and install them to your server before proceeding:
 
@@ -10,13 +10,13 @@ This plugin depends on the following sourcemod extensions, and includes. Obtain 
 2. [SMJansson](https://forums.alliedmods.net/showthread.php?t=184604)
 3. [Base64](https://forums.alliedmods.net/showthread.php?t=101764)
 
-##Installation
+## Installation
 
 While I figure out a better way to host builds, this plugin will have to be compiled before use.
 
 Just get all of the prerequisites installed, and then compile with `./spcomp twitterannouncements.sp`
 
-##Setup
+## Setup
 
 This plugin relies on the Twitter API, and you will need a set of API keys from Twitter in order to properly use the plugin. The following instructions will walk you through creating a new twitter application in order to obtain an authentication key, and secret.
 
@@ -28,7 +28,7 @@ This plugin relies on the Twitter API, and you will need a set of API keys from 
 
 At this point the plugin is ready to go! Just load it via `sm plugins load twitterannouncements`, or restart your server.
 
-##ConVars
+## ConVars
 
 1. `sm_announcements_displaytype`: Announcement display type. 0 = hintbox, 1 = msay
 1. `sm_announcements_requestinterval`: The interval at which to poll the Twitter API for changes.
